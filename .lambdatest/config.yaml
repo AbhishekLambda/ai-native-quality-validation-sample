@@ -12,5 +12,5 @@ environment_id: 155572
 test_url: "http://20.55.62.113:3000/"
 
 # Enable test duplication for reliability
-# use_duplication: true
+use_duplication: true
 template_test_run_id: "01K8953PEH0M4R7KQKXSSM66PM"
