@@ -13,4 +13,4 @@ test_url: "http://20.55.62.113:3000/"
 
 # Enable test duplication for reliability
 # use_duplication: true
-# template_test_run_id: "your_template_run_id"
+template_test_run_id: "01K8953PEH0M4R7KQKXSSM66PM"
