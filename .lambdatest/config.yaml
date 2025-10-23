@@ -1,0 +1,16 @@
+# LambdaTest Configuration
+
+# Project and folder configuration
+project_id: "01K88GEM5X8BDHWWVY819YRJTA"
+folder_id: "01K88GFKKP1TDP3AYBP725BW7C"
+
+# Test Run configuration
+assignee: 1732948
+environment_id: 155572
+
+# Test URL for automation
+test_url: "http://20.55.62.113:3000/"
+
+# Enable test duplication for reliability
+# use_duplication: true
+# template_test_run_id: "your_template_run_id"
