@@ -3,7 +3,6 @@
 
 A modern, full-stack Airbnb clone built with React, TypeScript, Node.js, and Express. This project demonstrates a complete vacation rental platform with property listings, search functionality, user authentication, and booking management.
 
-![Airbnb Clone](https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80)
 
 ## 🌟 Features
 
