@@ -52,35 +52,42 @@ password123
 - **Properties**: Multiple properties with complete profile, active bookings, and saved favorites
 - **Special**: Full demo account with populated data for Profile, Favorites, and Bookings pages
 
-### 6. Sarah Johnson (Host)
+### 6. Test User (Guest)
+- **Email**: `testuser@lambdatest.com`
+- **Password**: `password123`
+- **Role**: Guest
+- **Bio**: Test account for general testing and exploration.
+- **Properties**: Guest account for browsing and booking properties
+
+### 7. Sarah Johnson (Host)
 - **Email**: `sarah.johnson@email.com`
 - **Password**: `password123`
 - **Role**: Host
 - **Bio**: Travel enthusiast and photography lover. Host since 2019.
 - **Properties**: Owns 5 listings including Malibu villas and Waikiki condos
 
-### 7. Michael Chen (Host)
+### 8. Michael Chen (Host)
 - **Email**: `michael.chen@email.com`
 - **Password**: `password123`
 - **Role**: Host
 - **Bio**: Architect and real estate investor. Passionate about unique spaces.
 - **Properties**: Owns properties in Brooklyn and San Francisco
 
-### 8. Emma Davis (Guest)
+### 9. Emma Davis (Guest)
 - **Email**: `emma.davis@email.com`
 - **Password**: `password123`
 - **Role**: Guest (Not a host)
 - **Bio**: Digital nomad exploring the world one city at a time.
 - **Properties**: None (guest account only)
 
-### 9. James Wilson (Host)
+### 10. James Wilson (Host)
 - **Email**: `james.wilson@email.com`
 - **Password**: `password123`
 - **Role**: Host
 - **Bio**: Experienced host with 50+ properties worldwide.
 - **Properties**: Owns multiple listings in Austin, Miami, and Scottsdale
 
-### 10. Olivia Brown (Guest)
+### 11. Olivia Brown (Guest)
 - **Email**: `olivia.brown@email.com`
 - **Password**: `password123`
 - **Role**: Guest (Not a host)
@@ -226,7 +233,7 @@ Click "Create Listing" to add your property to the platform!
 - **Backend**: Running on http://localhost:5000/
 - **Mode**: Mock Data (No MongoDB required)
 - **Total Listings**: 28 properties
-- **Total Users**: 10 demo users
+- **Total Users**: 11 demo users
 
 ---
 
