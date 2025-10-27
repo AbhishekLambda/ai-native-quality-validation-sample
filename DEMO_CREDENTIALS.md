@@ -230,7 +230,7 @@ Click "Create Listing" to add your property to the platform!
 ## Current Application Status
 
 - **Frontend**: Running on https://demo.lambdatestinternal.com/
-- **Backend**: Running on http://localhost:5000/
+- **Backend**: Backend API (configured via environment)
 - **Mode**: Mock Data (No MongoDB required)
 - **Total Listings**: 28 properties
 - **Total Users**: 11 demo users
