@@ -26,6 +26,7 @@ const LOCATIONS = [
   { city: 'Los Angeles', state: 'California', country: 'United States' },
   { city: 'London', state: 'England', country: 'United States' },
   { city: 'Seoul', state: 'South Korea', country: 'United States' },
+  { city: 'Cairo', state: 'Egypt', country: 'United States' },
 ];
 
 const SearchBar = ({ onSearch, initialFilters }: SearchBarProps) => {
