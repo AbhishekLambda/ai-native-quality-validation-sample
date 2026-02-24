@@ -1,0 +1,80 @@
+name: PR Gatekeeper
+
+on:
+  pull_request_target:
+    types: [opened, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check-author:
+    name: Check PR author
+    # Only enforce on the upstream (LambdaTest) repo; forks skip this entirely
+    if: github.repository_owner == 'LambdaTest'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR author is allowed
+        id: check
+        run: |
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          ALLOWED="${{ vars.ALLOWED_PR_AUTHORS }}"
+          IFS=',' read -ra USERS <<< "$ALLOWED"
+          for user in "${USERS[@]}"; do
+            user="$(echo "$user" | xargs)"
+            if [ "$user" = "$AUTHOR" ]; then
+              echo "allowed=true" >> "$GITHUB_OUTPUT"
+              echo "Author '$AUTHOR' is allowed"
+              exit 0
+            fi
+          done
+          echo "allowed=false" >> "$GITHUB_OUTPUT"
+          echo "Author '$AUTHOR' is not in the allowed list"
+
+      - name: Comment and close PR
+        if: steps.check.outputs.allowed == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.payload.pull_request.number;
+            const author = context.payload.pull_request.user.login;
+
+            const marker = '<!-- external-contributor-notice -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber,
+            });
+            if (!comments.find(c => c.body.includes(marker))) {
+              const body = [
+                marker,
+                `### ℹ️ Preview deployment skipped`,
+                '',
+                `Hi @${author}, PR preview deployments and KaneAI validation are only available for authorized contributors on the upstream repository.`,
+                '',
+                `**To get started, raise a PR against your own fork instead:**`,
+                '',
+                `1. Fork this repo to your GitHub account`,
+                `2. Make changes on a feature branch`,
+                `3. Open a PR targeting **your fork's \`main\` branch**`,
+                `4. Comment \`@KaneAI Validate this PR\` to trigger validation`,
+                '',
+                `**Example PRs for reference:**`,
+                `- [Add stale time to React Query defaults (fork PR)](https://github.com/sandeepyadav-lt/ai-native-quality-validation-sample/pull/9)`,
+                `- [Add Superhost badge and footer (upstream PR by authorized user)](https://github.com/LambdaTest/ai-native-quality-validation-sample/pull/103)`,
+                '',
+                `**Documentation:**`,
+                `- [Setup Guide (README)](https://github.com/LambdaTest/ai-native-quality-validation-sample#-setup-for-github-app-quick-start-with-your-own-fork)`,
+                `- [LambdaTest GitHub App Integration Guide](https://www.testmuai.com/support/docs/github-app-integration/)`,
+                '',
+                `This PR will be automatically closed.`,
+              ].join('\n');
+
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: prNumber, body,
+              });
+            }
+
+            await github.rest.pulls.update({
+              owner, repo, pull_number: prNumber, state: 'closed',
+            });
