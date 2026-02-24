@@ -7,6 +7,10 @@ on:
     types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 
+env:
+  # Comma-separated list of GitHub usernames allowed to trigger PR preview deployments
+  ALLOWED_PR_AUTHORS: 'sandeepyadav-lt'
+
 permissions:
   contents: write
   pull-requests: write
@@ -16,9 +20,70 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-author:
+    name: Check PR author
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    outputs:
+      allowed: ${{ steps.check.outputs.allowed }}
+    steps:
+      - name: Check if PR author is allowed
+        id: check
+        run: |
+          AUTHOR="${{ github.event.pull_request.user.login }}"
+          IFS=',' read -ra USERS <<< "$ALLOWED_PR_AUTHORS"
+          for user in "${USERS[@]}"; do
+            user="$(echo "$user" | xargs)"
+            if [ "$user" = "$AUTHOR" ]; then
+              echo "allowed=true" >> "$GITHUB_OUTPUT"
+              echo "✅ Author '$AUTHOR' is allowed"
+              exit 0
+            fi
+          done
+          echo "allowed=false" >> "$GITHUB_OUTPUT"
+          echo "⛔ Author '$AUTHOR' is not in the allowed list"
+
+  notify-external:
+    name: Notify external contributor
+    needs: check-author
+    if: needs.check-author.outputs.allowed == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.issue.number;
+            const author = context.payload.pull_request.user.login;
+
+            const marker = '<!-- external-contributor-notice -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: prNumber,
+            });
+            if (comments.find(c => c.body.includes(marker))) return;
+
+            const body = [
+              marker,
+              `### ℹ️ Preview deployment skipped`,
+              '',
+              `Hi @${author}, PR preview deployments are only available for authorized contributors.`,
+              '',
+              `To generate a preview, please raise this PR against your own fork instead.`,
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner, repo, issue_number: prNumber, body,
+            });
+
   build:
     name: Build
-    if: github.event.action != 'closed'
+    needs: check-author
+    if: |
+      always() &&
+      github.event.action != 'closed' &&
+      (needs.check-author.result == 'skipped' || needs.check-author.outputs.allowed == 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
