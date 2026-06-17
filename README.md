@@ -120,53 +120,28 @@ set LT_ACCESS_KEY="YOUR_ACCESS_KEY"
 
 1. Create a feature branch in your fork, make changes, and open a pull request targeting your fork's `main` branch.
 
-2. Comment `@KaneAI Validate this PR` on your pull request.
+2. Comment `@TestMuAI Validate this PR` on your pull request.
 
 3. KaneAI will automatically trigger AI-native validation and post results on the PR.
 
 
-
-To run tests locally:
-
-
-
-```bash
-
-npm run dev
-
+   
+#### Specifying a URL or tunnel in the trigger
+ 
+By default, KaneAI validates against the pull request's preview deployment URL. You can now point validation at a specific URL, or reach a locally or privately hosted app through TestMu AI Tunnel, by passing options directly in the trigger comment:
+ 
+```text
+# Validate against a specific URL
+@KaneAI Validate this PR --url <test_url>
+ 
+# Validate a locally or privately hosted app through TestMu AI Tunnel
+@KaneAI Validate this PR --tunnel my-tunnel-name
+ 
+# Combine both — run against a local URL exposed via a tunnel
+@KaneAI Validate this PR --url http://localhost:5173 --tunnel <your-tunnel-name>
 ```
-
-
-
-### Local testing with TestMu AI Tunnel
-
-
-
-To test locally hosted apps, set up the TestMu AI tunnel. OS-specific guides:
-
-
-
-- [Local Testing on Windows](https://www.testmuai.com/support/docs/local-testing-for-windows/)
-
-- [Local Testing on macOS](https://www.testmuai.com/support/docs/local-testing-for-macos/)
-
-- [Local Testing on Linux](https://www.testmuai.com/support/docs/local-testing-for-linux/)
-
-
-
-Configure tunnel in your test capabilities:
-
-
-
-```javascript
-
-const capabilities = {
-
-  tunnel: true
-
-};
-
-```
+ 
+Refer to the [GitHub App Integration guide](https://www.testmuai.com/support/docs/github-app-integration/) for the complete list of supported trigger options.
 
 
 
