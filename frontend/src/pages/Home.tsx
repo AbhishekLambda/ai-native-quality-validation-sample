@@ -14,6 +14,11 @@ const categories = [
   { name: 'Luxury', icon: '✨', filter: { minPrice: 500 } },
   { name: 'Budget', icon: '🎯', filter: { maxPrice: 300 } },
   { name: 'Mountain', icon: '🏔️', filter: { amenities: ['Mountain View'] } },
+  { name: 'Pools', icon: '🏊', filter: { amenities: ['Pool'] } },
+  { name: 'Hot tubs', icon: '♨️', filter: { amenities: ['Hot Tub'] } },
+  { name: 'Work stays', icon: '💻', filter: { amenities: ['Workspace'] } },
+  { name: 'Family size', icon: '👨‍👩‍👧‍👦', filter: { bedrooms: 3, guests: 6 } },
+  { name: 'Pet friendly', icon: '🐾', filter: { amenities: ['Pet Friendly'] } },
 ];
 
 const Home = () => {
@@ -87,12 +92,12 @@ const Home = () => {
       {/* Categories - Center Aligned */}
       <div className="border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-center space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex lg:justify-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
             {categories.map((category) => (
               <button
                 key={category.name}
                 onClick={() => handleCategoryClick(category.name)}
-                className={`flex flex-col items-center space-y-2 px-6 py-3 rounded-lg transition min-w-fit ${
+                className={`flex flex-col items-center space-y-2 px-5 py-3 rounded-lg transition min-w-fit ${
                   activeCategory === category.name
                     ? 'bg-gray-100 border-b-2 border-gray-900'
                     : 'hover:bg-gray-50'
