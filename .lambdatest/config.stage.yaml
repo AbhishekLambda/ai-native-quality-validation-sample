@@ -1,4 +1,4 @@
-project_id: <your TMS project id>
-folder_id: <your TMS folder id>
+project_id: "01J5E3FBKDF74FRY54H0CQ06TN"
+folder_id: "01J5E3FBM6M26BPJ309AS381VB"
 configuration_name: "Kane_Web_Config"   
 test_url: "demo.lambdatestinternal.com"
