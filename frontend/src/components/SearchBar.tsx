@@ -27,6 +27,10 @@ const LOCATIONS = [
   { city: 'Seoul', state: 'South Korea', country: 'South Korea' },
   { city: 'Ghaziabad', state: 'Uttar Pradesh', country: 'India' },
   { city: 'Delhi', state: 'Delhi', country: 'India' },
+  { city: 'Seattle', state: 'Washington', country: 'United States' },
+  { city: 'Boston', state: 'Massachusetts', country: 'United States' },
+  { city: 'Chicago', state: 'Illinois', country: 'United States' },
+  { city: 'South Lake Tahoe', state: 'California', country: 'United States' },
 ];
 
 const SearchBar = ({ onSearch, initialFilters }: SearchBarProps) => {
