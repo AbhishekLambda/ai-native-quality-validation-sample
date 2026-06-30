@@ -18,7 +18,7 @@ const Login = () => {
     onSuccess: (data) => {
       setUser(data.user, data.token);
       toast.success('Welcome back!');
-      navigate('/');
+      navigate('/profile');
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || 'Login failed');
