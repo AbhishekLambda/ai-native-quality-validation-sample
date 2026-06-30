@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
+import { authService } from '../services/authService';
 import { FaUser, FaEnvelope, FaPhone, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 
 const Profile = () => {
-  const { user } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     firstName: user?.firstName || '',
@@ -13,16 +16,55 @@ const Profile = () => {
     bio: user?.bio || '',
   });
 
+  const profileQuery = useQuery({
+    queryKey: ['profile'],
+    queryFn: authService.getProfile,
+    enabled: Boolean(user),
+  });
+
+  useEffect(() => {
+    if (!profileQuery.data?.user) return;
+
+    const profile = profileQuery.data.user;
+    updateUser(profile);
+    setFormData({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      email: profile.email,
+      phone: profile.phone || '',
+      bio: profile.bio || '',
+    });
+  }, [profileQuery.data, updateUser]);
+
+  const updateProfileMutation = useMutation({
+    mutationFn: authService.updateProfile,
+    onSuccess: ({ user: updatedUser }) => {
+      updateUser(updatedUser);
+      setIsEditing(false);
+      toast.success('Profile updated');
+    },
+    onError: () => {
+      toast.error('Unable to update your profile');
+    },
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = () => {
-    // In a real app, this would make an API call to update the user profile
-    console.log('Saving profile:', formData);
-    setIsEditing(false);
-    // TODO: Implement API call to update user profile
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      toast.error('First and last name are required');
+      return;
+    }
+
+    updateProfileMutation.mutate({
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
+      phone: formData.phone.trim(),
+      bio: formData.bio.trim(),
+    });
   };
 
   const handleCancel = () => {
@@ -47,13 +89,13 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
           <div className="bg-gradient-to-r from-airbnb-red to-red-600 h-32"></div>
           <div className="px-6 pb-6">
-            <div className="flex items-end -mt-16 mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-end -mt-16 mb-4">
               <div className="relative">
                 <img
                   src={user.avatar || 'https://i.pravatar.cc/150?img=68'}
@@ -66,13 +108,13 @@ const Profile = () => {
                   </div>
                 )}
               </div>
-              <div className="ml-6 mb-4">
-                <h1 className="text-3xl font-bold text-gray-900">
+              <div className="mt-4 sm:ml-6 sm:mb-4">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {user.firstName} {user.lastName}
                 </h1>
                 <p className="text-gray-600">{user.email}</p>
               </div>
-              <div className="ml-auto mb-4">
+              <div className="mt-4 sm:ml-auto sm:mb-4">
                 {!isEditing ? (
                   <button
                     onClick={() => setIsEditing(true)}
@@ -85,13 +127,15 @@ const Profile = () => {
                   <div className="flex space-x-2">
                     <button
                       onClick={handleSave}
-                      className="flex items-center space-x-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                      disabled={updateProfileMutation.isPending}
+                      className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <FaSave />
-                      <span>Save</span>
+                      <span>{updateProfileMutation.isPending ? 'Saving...' : 'Save'}</span>
                     </button>
                     <button
                       onClick={handleCancel}
+                      disabled={updateProfileMutation.isPending}
                       className="flex items-center space-x-2 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
                     >
                       <FaTimes />
@@ -105,7 +149,7 @@ const Profile = () => {
         </div>
 
         {/* Profile Information */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-lg shadow-md p-6" aria-busy={profileQuery.isLoading}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile Information</h2>
 
           <div className="space-y-6">
@@ -159,7 +203,8 @@ const Profile = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-airbnb-red focus:border-transparent"
+                  disabled
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
                 />
               ) : (
                 <p className="text-gray-900 pl-6">{user.email}</p>
