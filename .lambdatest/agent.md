@@ -7,3 +7,7 @@ This is the Airbnb Clone application used for automated testing and quality assu
 ## Usage
 
 The test URL is resolved automatically from the workflow context (e.g., PR preview deployment URL). No hardcoded deployment URL is needed here.
+
+## MUST USE Login Credentials
+Email: lambdatestadmin@email.com
+Password: password123
