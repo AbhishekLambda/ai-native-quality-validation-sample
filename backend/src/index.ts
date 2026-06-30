@@ -15,13 +15,17 @@ dotenv.config();
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.CORS_ORIGIN,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://demo.lambdatestinternal.com',
+].filter(Boolean) as string[];
 
 // Middleware
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'https://demo.lambdatestinternal.com',
-    'https://demo.lambdatestinternal.com',
-  ],
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json());
